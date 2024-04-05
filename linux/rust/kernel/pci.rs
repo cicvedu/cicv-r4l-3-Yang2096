@@ -88,7 +88,7 @@ impl<T: Driver> Adapter<T> {
         //     `remove` is the canonical kernel location to free driver data. so OK
         //     to convert the pointer back to a Rust structure here.
         let data = unsafe { T::Data::from_pointer(ptr) };
-        T::remove(&data);
+        T::remove(pdev, &data);
         <T::Data as driver::DeviceRemoval>::device_remove(&data);
     }
 }
@@ -224,7 +224,7 @@ pub trait Driver {
     ///
     /// Called when a platform device is removed.
     /// Implementers should prepare the device for complete removal here.
-    fn remove(_data: &Self::Data);
+    fn remove(pdev: *mut bindings::pci_dev, _data: &Self::Data);
 }
 
 /// PCI resource
